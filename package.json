@@ -1,27 +1,29 @@
 {
-  "name": "electron-quick-start",
+  "name": "presp-electron-app",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Programa de registro de entrada e saída de pessoas em Electron",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron/electron-quick-start.git"
+    "url": "git+https://github.com/Yemolai/presp-electron-app.git"
   },
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial"
+    "Node.js",
+    "PRESP",
+    "fluxo",
+    "pessoas",
+    "yemolai"
   ],
   "author": "GitHub",
-  "license": "CC0-1.0",
+  "license": "CC-BY-SA-4.0",
   "bugs": {
-    "url": "https://github.com/electron/electron-quick-start/issues"
+    "url": "https://github.com/Yemolai/presp-electron-app/issues"
   },
-  "homepage": "https://github.com/electron/electron-quick-start#readme",
+  "homepage": "https://github.com/Yemolai/presp-electron-app#readme",
   "devDependencies": {
     "electron-prebuilt": "^0.37.0"
   }

@@ -1,0 +1,42 @@
+<h3>{{title}}</h3>
+<div class="container">
+  <form name="form.pessoa">
+    <div class="form-group">
+      <label for="nomePessoa">Nome completo</label>
+      <input id="nomePessoa" class="form-control" type="text" required
+        ng-model="nome" placeholder="Nome completo">
+    </div>
+    <div class="form-group">
+      <label for="tipoDocPessoa">Tipo de documento</label>
+      <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc" required>
+        <option ng-repeat="tipo in tiposDoc track by tipo.id" value="{{tipo.id}}">
+          {{tipo.text}}
+        </option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="documentoPessoa">Número de documento de identidade</label>
+      <input id="documentoPessoa" class="form-control" type="text" required
+        ng-model="documento" placeholder="Número do documento">
+    </div>
+    <div class="form-group">
+      <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-success active" ng-click="setEntrada()">
+          <input type="radio" autocomplete="off"
+            ng-model="movimento" value="entrada" checked> Entrada
+        </label>
+        <label class="btn btn-danger"  ng-click="setSaida()">
+          <input type="radio" autocomplete="off"
+            ng-model="movimento" value="saida"> Saída
+        </label>
+      </div>
+    </div>
+    <div class="pull-right">
+      <button id="register" class="btn btn-primary" ng-click="addPessoa()">
+        Registrar
+      </button>
+    </div>
+    <span class="alert alert-success pull-left" ng-hide="!showDoneAlert">Registrado</span>
+    <span class="alert alert-danger pull-left" ng-hide="!showErrorAlert">Todos os campos são necessários</span>
+  </form>
+</div>

@@ -2,12 +2,54 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>PRESP</title>
+    <!-- Frameworks -->
+      <!-- jQuery tem um import especial porque jQuery detecta estar rodando em
+      ambiente CommonJS e ignora o window, se tornando um módulo, portanto tendo
+       que ser carregado usando require conforme issue relatada no git do
+       Electron (https://github.com/electron/electron/issues/254) -->
+    <script>window.$ = window.jQuery = require('./bower_components/jquery/dist/jquery.js');</script>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" media="screen" title="Twitter Bootstrap" charset="utf-8">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" media="screen" title="Twitter Bootstrap theme" charset="utf-8">
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js" charset="utf-8"></script>
+    <script src="bower_components/angular/angular.js" charset="utf-8"></script>
+    <script src="i18n_pt-br.js" charset="utf-8"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js" charset="utf-8"></script>
+    <script src="bower_components/angular-file-saver/dist/angular-file-saver.bundle.js" charset="utf-8"></script>
+
+    <!-- Angular modules -->
+    <script src="app.js" charset="utf-8"></script>
+    <script src="controller.js" charset="utf-8"></script>
+    <script src="model.js" charset="utf-8"></script>
   </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+  <body ng-app="presp">
+    <div class="container">
+      <!-- Barra de navegação -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header"><button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Abrir/fechar menu</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button><a href="#" class="navbar-brand">PRESP</a></div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="#/">Registrar</a></li>
+              <li><a href="#/list">Lista</a></li>
+              <li><a href="#/export">Exportar</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#/about">Sobre</a></li>
+              <li><a href="#/help">Ajuda</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- Fim da barra de navegação -->
+      <div class="jumbotron">
+        <div ui-view></div>
+      </div>
+    </div>
   </body>
 </html>

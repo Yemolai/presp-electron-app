@@ -1,30 +1,32 @@
-# electron-quick-start
+# PRESP
+presp-electron-app
 
-**Clone and run for a quick way to see an Electron in action.**
+Esta é uma aplicação minimalista baseada no Electron para registro de fluxo de pessoas.
 
-This is a minimal Electron application based on the [Quick Start Guide](http://electron.atom.io/docs/latest/tutorial/quick-start) within the Electron documentation.
+## Dependências
 
-A basic Electron application needs just these files:
+Esta aplicação necessita das seguintes dependências:
 
-- `index.html` - A web page to render.
-- `main.js` - Starts the app and creates a browser window to render HTML.
-- `package.json` - Points to the app's main file and lists its details and dependencies.
+### Bower
 
-You can learn more about each of these components within the [Quick Start Guide](http://electron.atom.io/docs/latest/tutorial/quick-start).
+- `AngularJS` - Framework principal para construção das páginas.
+- `AngularUI Router` - Serve como roteamento de views em aplicativo de página única.
+- `Angular File Saver` - Para salvar arquivos provenientes da exportação dos dados.
+- `Twitter Bootstrap` - Para formatar as páginas adequadamente.
 
-## To Use
+## Para usar
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+Para clonar e rodar este repositório você vai precisar do [Git](https://git-scm.com), do [Node.js](https://nodejs.org/en/download/) (que vem com o [npm](http://npmjs.com)) e o [Electron](https://github.com/electron/electron) instalados no seu computador. Da sua linha de comando:
 
 ```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start
-# Go into the repository
-cd electron-quick-start
-# Install dependencies and run the app
-npm install && npm start
+# Clone este repositório
+git clone https://github.com/Yemolai/presp-electron-app
+# Entre no repositório
+cd presp-electron-app
+# Instale as dependências e rode o aplicativo
+npm i && bower install && npm start
 ```
 
-Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/latest).
+Saiba mais sobre Electron e sua API na sua [documentação](http://electron.atom.io/docs/latest).
 
-#### License [CC0 (Public Domain)](LICENSE.md)
+#### License [CC-BY-SA-4 (Domínio público)](LICENSE.md)

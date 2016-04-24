@@ -1,0 +1,37 @@
+<h3>{{title}}</h3>
+<div class="container">
+  <input type="text" class="form-control" placeholder="Buscar..."
+  ng-model="searchText" ng-hide="pessoas.length == 0" aria-label="Buscar...">
+  <div ng-if="pessoas.length==0">
+    <br/>
+    <span class="alert alert-warning">
+      Não há registros no banco de dados
+    </span>
+  </div>
+  <ul class="list-group" ng-if="pessoas.length > 0">
+    <li class="list-group-item"
+    ng-repeat="pessoa in pessoas | orderBy:'-timestamp' | filter:searchText track by pessoa.timestamp">
+      <span class="pull-right">
+        <button class="btn btn-link" ng-if="!pessoa.in"
+          ng-click="entrada(pessoa.timestamp)">
+          <span class="glyphicon glyphicon-log-in"></span>
+        </button>
+        <button class="btn btn-link" ng-if="pessoa.in"
+          ng-click="saida(pessoa.timestamp)">
+          <span class="glyphicon glyphicon-log-out"></span>
+        </button>
+      </span>
+      <span ng-if="pessoa.in"
+        class="glyphicon glyphicon-log-in text-success"></span>
+      <span ng-if="!pessoa.in"
+        class="glyphicon glyphicon-log-out text-danger"></span>
+      <strong>
+        {{ pessoa.timestamp | date: 'short'}}
+      </strong>
+      {{ pessoa.nome }} ({{ doc[pessoa.tipoDoc] }} {{ pessoa.documento }})
+    </li>
+    <li ng-if="results.length == 0">
+      <strong>Nenhum resultado encontrado...</strong>
+    </li>
+  </ul>
+</div>

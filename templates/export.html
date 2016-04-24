@@ -1,0 +1,46 @@
+<h2>{{title}}</h2>
+<div class="container">
+  <h3>Exportar em arquivo de texto</h3>
+  <p>Ao clicar neste botão, será criado um arquivo a partir da base de dados e
+  será solicitado um local para você salvar o arquivo. O arquivo gerado é em
+  formato de texto plano.</p>
+  <a class="btn btn-default" ng-click="exportTXT()" href="#" download="prespData.txt">
+    <span class="glyphicon glyphicon-file"></span>
+    &nbsp; Exportar em arquivo de texto
+  </a>
+  <br/>
+  <br/>
+  <h3>Exportar em arquivo JSON</h3>
+  <p>Ao clicar neste botão será criado um arquivo com os dados exatos na base de
+  dados local atual e será solicitado um local para salvar o arquivo. O arquivo
+  gerado é em notação de objeto Javascript.</p>
+  <a class="btn btn-success" ng-click="exportJSON()">
+    <span class="glyphicon glyphicon-qrcode"></span>
+    &nbsp; Exportar em arquivo JSON
+  </a>
+  <br/>
+  <br/>
+  <h3>Exportar em arquivo CSV/Excel</h3>
+  <p>Ao clicar neste botão será criado um arquivo com os dados exatos na base de
+  dados local dispostos em texto separado por vírgulas compatível
+  com <strong>Microsoft Excel</strong> e outros softwares de planilha. O arquivo
+  gerado é formato de valores separados por vírgula.</p>
+  <button class="btn btn-primary" ng-click="exportCSV()">
+    <span class="glyphicon glyphicon-list-alt"></span>
+    &nbsp; Exportar em arquivo CSV
+  </button>
+  <br/>
+  <br/>
+  <h3>Apagar base de dados</h3>
+  <p class="text-danger">
+    <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Ao clicar neste
+    botão toda a base de dados será destruída. Não há como desfazer esta ação ou
+    recuperar dados apagados. Tenha certeza de realizar uma cópia de segurança
+    através das opções de exportação indicadas acima antes de pressionar este
+    botão. Uma confirmação será exibida ao clicar neste botão para evitar
+    acidentes.</p>
+  <button class="btn btn-danger" ng-click="clearLDB()">
+    <span class="glyphicon glyphicon-fire"></span>
+    Incinerar base de dados
+  </button>
+</div>
