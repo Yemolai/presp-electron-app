@@ -14,7 +14,8 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    icon: "img/favicon.ico"
   });
   mainWindow.setMenuBarVisibility(false);
   mainWindow.maximize();
