@@ -1,14 +1,10 @@
-<h3>{{title}}</h3>
-<div class="container">
+<div class="jumbotron">
+  <h3>{{title}}</h3>
   <form name="form.pessoa">
     <div class="form-group">
-      <label for="nomePessoa">Nome completo</label>
-      <input id="nomePessoa" class="form-control" type="text" required
-        ng-model="nome" placeholder="Nome completo">
-    </div>
-    <div class="form-group">
       <label for="tipoDocPessoa">Tipo de documento</label>
-      <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc" required>
+      <div ng-hide="tipoDocPopulated" style="background:url({{module_static}}spinner.gif) no-repeat center center;width:32px;height:32px;"></div>
+      <select id="tipoDocPessoa" ng-show="tipoDocPopulated" class="form-control" ng-model="tipoDoc" required>
         <option ng-repeat="tipo in tiposDoc track by tipo.id" value="{{tipo.id}}">
           {{tipo.text}}
         </option>
@@ -18,6 +14,11 @@
       <label for="documentoPessoa">Número de documento de identidade</label>
       <input id="documentoPessoa" class="form-control" type="text" required
         ng-model="documento" placeholder="Número do documento">
+    </div>
+    <div class="form-group">
+      <label for="nomePessoa">Nome completo</label>
+      <input id="nomePessoa" class="form-control" type="text" required
+        ng-model="nome" placeholder="Nome completo">
     </div>
     <div class="form-group">
       <div class="btn-group" data-toggle="buttons">
@@ -32,7 +33,7 @@
       </div>
     </div>
     <div class="pull-right">
-      <button id="register" class="btn btn-primary" ng-click="addPessoa()">
+      <button id="register" class="btn btn-primary" ng-click="register()">
         Registrar
       </button>
     </div>

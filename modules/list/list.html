@@ -1,0 +1,78 @@
+<style media="screen">
+.hvr-btn {
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease-in;
+  transition: opacity 0.3s ease-in;
+}
+
+.list-group-item:hover .hvr-btn {
+  opacity: 1;
+}
+</style>
+<h3>{{title}}</h3>
+<!-- Container principal  -->
+<div class="container-fluid">
+  <!-- Campo de busca -->
+  <input type="text" class="form-control" placeholder="Buscar..." style="margin-bottom: 0.5em"
+  ng-model="searchText" ng-hide="registros.length == 0" aria-label="Buscar...">
+  <!-- Exibição de informativo caso a lista de registros esteja vazia -->
+  <div ng-if="count==0">
+    <span class="alert alert-warning">
+      Não há registros no banco de dados
+    </span>
+  </div>
+  <!-- Lista de itens de registro -->
+  <ul class="list-group" ng-if="count > 0">
+    <!-- Item que se repete a cada registro -->
+    <li id="listitem{{$index}}" class="list-group-item clearfix"
+    ng-repeat="r in registros | filter:searchText track by r.momento">
+      <span ng-if="r.sentido == 'entrada'"
+        class="glyphicon glyphicon-log-in text-success"></span>
+      <span ng-if="r.sentido == 'saida'"
+        class="glyphicon glyphicon-log-out text-danger"></span>
+      &nbsp;
+      <strong>
+        {{ r.momento | date: 'short'}}
+      </strong>
+      {{ r.Pessoa.nome }}&nbsp;
+      <small>
+        ( {{ doc[r.Pessoa.TipoDocId] }}&nbsp;{{ r.Pessoa.documento }} )
+      </small>
+      <span id="options{{$index}}" class="pull-right ">
+        <button class="btn btn-xs btn-info hvr-btn" ng-if="r.sentido == 'saida'"
+          ng-click="entrada(r.id)">
+          <span class="glyphicon glyphicon-log-in"></span>
+        </button>
+        <button class="btn btn-xs btn-info hvr-btn" ng-if="r.sentido == 'entrada'"
+          ng-click="saida(r.id)">
+          <span class="glyphicon glyphicon-log-out"></span>
+        </button>
+        <button class="btn btn-xs btn-warning hvr-btn" ng-click="delete(r.id)">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
+      </span>
+    </li>
+    <li ng-if="results.length == 0">
+      <strong>Nenhum resultado encontrado...</strong>
+    </li>
+  </ul>
+  <center>
+    <nav aria-label="Page navigation" ng-if="count > 0">
+      <ul class="pagination">
+        <li ng-if="offset > 0">
+          <a href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <!-- Falta terminar a paginação -->
+        <li><a href="#">1</a></li>
+        <li ng-if="offset < (count-10)">
+          <a href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <p><small>Existem {{count}} registros no banco de dados</small></p>
+  </center>
+</div>

@@ -8,26 +8,43 @@
       ambiente CommonJS e ignora o window, se tornando um módulo, portanto tendo
        que ser carregado usando require conforme issue relatada no git do
        Electron (https://github.com/electron/electron/issues/254) -->
-    <script>window.$ = window.jQuery = require('./bower_components/jquery/dist/jquery.js');</script>
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" media="screen" title="Twitter Bootstrap" charset="utf-8">
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" media="screen" title="Twitter Bootstrap theme" charset="utf-8">
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js" charset="utf-8"></script>
+    <script>
+     window.$=window.jQuery=require('./bower_components/jquery/dist/jquery.js');
+    </script>
+    <link rel="stylesheet"
+    href="bower_components/bootstrap/dist/css/bootstrap.css"
+      media="screen" title="Twitter Bootstrap" charset="utf-8">
+    <link rel="stylesheet"
+    href="bower_components/bootstrap/dist/css/bootstrap-theme.css"
+      media="screen" title="Twitter Bootstrap theme" charset="utf-8">
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"
+      charset="utf-8"></script>
     <script src="bower_components/angular/angular.js" charset="utf-8"></script>
-    <script src="i18n_pt-br.js" charset="utf-8"></script>
-    <script src="bower_components/angular-ui-router/release/angular-ui-router.js" charset="utf-8"></script>
-    <script src="bower_components/angular-file-saver/dist/angular-file-saver.bundle.js" charset="utf-8"></script>
+    <script src="modules/angular_pt_br_translation/i18n_pt-br.js"
+    charset="utf-8"></script>
+    <script
+    src="bower_components/angular-ui-router/release/angular-ui-router.js"
+    charset="utf-8"></script>
+    <script
+    src="bower_components/angular-file-saver/dist/angular-file-saver.bundle.js"
+    charset="utf-8"></script>
 
     <!-- Angular modules -->
     <script src="app.js" charset="utf-8"></script>
-    <script src="controller.js" charset="utf-8"></script>
-    <script src="model.js" charset="utf-8"></script>
+    <script src="modules/database/module.js" charset="utf-8"></script>
+    <script src="modules/home/module.js" charset="utf-8"></script>
+    <script src="modules/list/module.js" charset="utf-8"></script>
+    <script src="modules/export/module.js" charset="utf-8"></script>
+    <script src="modules/abouthelp/module.js" charset="utf-8"></script>
   </head>
   <body ng-app="presp">
-    <div class="container">
+    <div class="container-fluid">
       <!-- Barra de navegação -->
       <nav class="navbar navbar-default">
         <div class="container-fluid">
-          <div class="navbar-header"><button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <div class="navbar-header"><button class="navbar-toggle collapsed"
+            data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+            aria-controls="navbar">
               <span class="sr-only">Abrir/fechar menu</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -47,7 +64,7 @@
         </div>
       </nav>
       <!-- Fim da barra de navegação -->
-      <div class="jumbotron">
+      <div class="container-fluid">
         <div ui-view></div>
       </div>
     </div>
