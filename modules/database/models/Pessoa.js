@@ -1,6 +1,6 @@
 // Modelo da tabela Pessoa
 module.exports = function (banco, tipo) {
-  return banco.define('Pessoa', {
+  var Pessoa = banco.define('Pessoa', {
     'nome': {
       'type': tipo.STRING,
       'unique': true, // não pode repetir nomes
@@ -18,14 +18,12 @@ module.exports = function (banco, tipo) {
         'isAlphanumeric': true
       }
     }, // end documento
-    // Coluna Crachá (Identificação específica)
-    'cracha': {
-      'type': tipo.STRING,
-      'allowNull': true,
-      'validate': {
-        'isNumeric': true
-        // TODO adicionar validação por RegExp
+  }, {
+    classMethods: {
+      associate: function (models) {
+        Pessoa.belongsTo(models.Doc)
       }
-    } // end crachá
+    }
   }) // end define
+  return Pessoa
 } // end export function

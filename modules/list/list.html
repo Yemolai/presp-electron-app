@@ -8,6 +8,12 @@
 .list-group-item:hover .hvr-btn {
   opacity: 1;
 }
+a.disabled {
+    color: #AAAAAA;
+    cursor: default;
+    pointer-events: none;
+    text-decoration: none;
+}
 </style>
 <h3>{{title}}</h3>
 <!-- Container principal  -->
@@ -17,12 +23,16 @@
   ng-model="searchText" ng-hide="registros.length == 0" aria-label="Buscar...">
   <!-- Exibição de informativo caso a lista de registros esteja vazia -->
   <div ng-if="count==0">
-    <span class="alert alert-warning">
-      Não há registros no banco de dados
-    </span>
+    <div class="well-lg">
+      <div class="text-center">
+        <span class="alert alert-warning">
+          Não há registros no banco de dados
+        </span>
+      </div>
+    </div>
   </div>
   <!-- Lista de itens de registro -->
-  <ul class="list-group" ng-if="count > 0">
+  <ul class="list-group" ng-if="pagination.count > 0">
     <!-- Item que se repete a cada registro -->
     <li id="listitem{{$index}}" class="list-group-item clearfix"
     ng-repeat="r in registros | filter:searchText track by r.momento">
@@ -52,27 +62,36 @@
         </button>
       </span>
     </li>
-    <li ng-if="results.length == 0">
+    <li ng-if="results.length==0">
       <strong>Nenhum resultado encontrado...</strong>
     </li>
   </ul>
   <center>
-    <nav aria-label="Page navigation" ng-if="count > 0">
+    <nav aria-label="Page navigation" ng-if="pagination.count">
       <ul class="pagination">
-        <li ng-if="offset > 0">
-          <a href="#" aria-label="Previous">
+        <li ng-if="!pagination.atBeginning">
+          <a href="#" aria-label="Previous" ng-click="irPagina(0)">
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
-        <!-- Falta terminar a paginação -->
-        <li><a href="#">1</a></li>
-        <li ng-if="offset < (count-10)">
-          <a href="#" aria-label="Next">
+        <li ng-repeat="page in pagination.pages">
+          <a href="#" ng-if="page.enabled" aria-label="Go to page" ng-click="irPagina(page.offset)">
+            <span ng-if="page.num!=pagination.pageActual">{{page.num}}</span>
+            <span ng-if="page.num==pagination.pageActual"><strong>{{page.num}}</strong></span>
+          </a>
+          <a href="#" aria-hidden="true" ng-if="!page.enabled" class="disabled">
+            <span aria-hidden="true">&nbsp;</span>
+          </a>
+        </li>
+        <li ng-if="!pagination.atEnding">
+          <a href="#" aria-label="Next" ng-click="irPagina(pagination.lastPageOffset)">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
       </ul>
     </nav>
-    <p><small>Existem {{count}} registros no banco de dados</small></p>
+    <p ng-hide="!pagination.count">
+      <small>Existem {{pagination.count}} registros no banco de dados</small>
+    </p>
   </center>
 </div>

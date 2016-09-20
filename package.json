@@ -25,7 +25,9 @@
   },
   "homepage": "https://github.com/Yemolai/presp-electron-app#readme",
   "devDependencies": {
-    "electron-prebuilt": "^0.37.0"
+    "electron-prebuilt": "^0.37.0",
+    "eslint": "^3.5.0",
+    "eslint-config-google": "^0.6.0"
   },
   "dependencies": {
     "sequelize": "^3.24.1",

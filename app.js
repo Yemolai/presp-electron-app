@@ -1,12 +1,12 @@
-var App = angular.module('presp', [
-  'ui.router',
-  'presp.database',
-  'presp.home',
-  'presp.list',
-  'presp.export',
-  'presp.abouthelp'
-])
-.config(function ($urlRouterProvider) {
-  // Para qualquer outra URL, redirecionar para /home
-  $urlRouterProvider.otherwise("/home");
-})
+/**
+ * Módulo principal do aplicativo
+ * Aglutina os demais módulos e inicializa o sistema
+ */
+angular.module('presp', [
+  'ui.router', // router
+  'presp.database', // banco de dados
+  'presp.home', // página principal
+  'presp.list', // listagem de fluxo
+  'presp.export', // exportação de dados
+  'presp.abouthelp' // sobre/ajuda
+]);

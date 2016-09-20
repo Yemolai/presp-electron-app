@@ -2,11 +2,18 @@
   <h3>{{title}}</h3>
   <form name="form.pessoa">
     <div class="form-group">
+      <label for="crachaPessoa">Crachá de identificação</label>
+      <select id="crachaPessoa" class="form-control" ng-model="cracha" required>
+        <option ng-repeat="c in crachas track by c.id" value="{{c.id}}">
+          {{c.nome}}
+        </option>
+      </select>
+    </div>
+    <div class="form-group">
       <label for="tipoDocPessoa">Tipo de documento</label>
-      <div ng-hide="tipoDocPopulated" style="background:url({{module_static}}spinner.gif) no-repeat center center;width:32px;height:32px;"></div>
-      <select id="tipoDocPessoa" ng-show="tipoDocPopulated" class="form-control" ng-model="tipoDoc" required>
+      <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc" required>
         <option ng-repeat="tipo in tiposDoc track by tipo.id" value="{{tipo.id}}">
-          {{tipo.text}}
+          {{tipo.descricao}}
         </option>
       </select>
     </div>
@@ -37,7 +44,6 @@
         Registrar
       </button>
     </div>
-    <span class="alert alert-success pull-left" ng-hide="!showDoneAlert">Registrado</span>
-    <span class="alert alert-danger pull-left" ng-hide="!showErrorAlert">Todos os campos são necessários</span>
+    <span class="alert alert-{{mensagem.level}} pull-left" ng-hide="!showMessage">{{mensagem.texto}}</span>
   </form>
 </div>
