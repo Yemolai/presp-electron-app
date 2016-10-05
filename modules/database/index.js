@@ -3,19 +3,20 @@ angular.module('presp.database', ['presp'])
 // Factory do banco de dados
 .factory('DB', function () {
   var MODULE_DIR = 'modules/database/';
-  var SQLITE_PATH = MODULE_DIR + 'database.sqlite';
+  var SQLITE_PATH = __dirname + '/database.sqlite';
   var MODEL_DIR = __dirname + '/' + MODULE_DIR + 'models/';
   var fs = require('fs');
   var path = require('path');
   var Sequelize = require('sequelize'); // ORM
   var DB = {
+    _sql: require('sqlite3'),
     _seq: Sequelize,
     promise: Sequelize.Promise,
     lodash: Sequelize.Utils._,
     conn: new Sequelize('presp', 'un', '', { // objeto de conexão a ser utilizado
       dialect: 'sqlite',
       storage: SQLITE_PATH,
-      logging: true,
+      // logging: false,
     }),
     model: {},
     export: function (exportFunction) { // exportFunction need to be callable

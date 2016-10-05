@@ -1,11 +1,12 @@
 {
   "name": "presp-electron-app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Programa de registro de entrada e saída de pessoas em Electron",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
-    "postinstall": "bower install && npm start"
+    "postinstall": "bower install && npm start",
+    "update": "git pull && npm i && npm postinstall"
   },
   "repository": {
     "type": "git",
@@ -26,12 +27,12 @@
   },
   "homepage": "https://github.com/Yemolai/presp-electron-app#readme",
   "devDependencies": {
-    "electron-prebuilt": "^0.37.0",
+    "electron-rebuild": "^1.2.1",
     "eslint": "^3.5.0",
     "eslint-config-google": "^0.6.0"
   },
   "dependencies": {
-    "sequelize": "^3.24.1",
-    "sqlite3": "^3.1.4"
+    "electron-prebuilt": "^1.4.2",
+    "sequelize": "^3.24.1"
   }
 }
