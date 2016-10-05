@@ -1,4 +1,4 @@
-/* angular */
+/* global angular */
 angular.module('presp.database', ['presp'])
 // Factory do banco de dados
 .factory('DB', function () {
@@ -9,12 +9,35 @@ angular.module('presp.database', ['presp'])
   var path = require('path');
   var Sequelize = require('sequelize'); // ORM
   var DB = {
+    _seq: Sequelize,
+    promise: Sequelize.Promise,
+    lodash: Sequelize.Utils._,
     conn: new Sequelize('presp', 'un', '', { // objeto de conexão a ser utilizado
       dialect: 'sqlite',
       storage: SQLITE_PATH,
-      logging: false,
+      logging: true,
     }),
     model: {},
+    export: function (exportFunction) { // exportFunction need to be callable
+      var models = DB.model; // modelos
+      var queries = [];
+      var output = {};
+      for (var modelName in models) {
+        queries.push(models[modelName].findAll());
+      }
+      DB.promise.map(queries, function (queryResult) {
+          var table = {};
+          for (var line in queryResult) {
+            table[queryResult[line].dataValues.id] = queryResult[line].get();
+          }
+          if (queryResult.length>0) {
+            output[queryResult[0].Model.name] = table;
+          }
+        }).then(function () {
+          // this then executes when all map finishes
+          return output; // injects output as argument for next execution
+        }).then(exportFunction); // callback function passed when called
+    },
     listAll: function (model, options) { // Função para requisitar um SELECT ALL de um modelo
       var Results = [],
           findOptions = {},

@@ -65,7 +65,6 @@ angular.module('presp.list', ['presp', 'presp.database'])
   $scope.doc = T; // ids dos tipos de documento
   $scope.searchText = '';
   $scope.pagination = P;
-  console.warn('R: ', R);
   function novamente(id, sentido) {
       DB.model.Registro.findById(id,{
         attributes: ['PessoaId']

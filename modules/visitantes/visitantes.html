@@ -1,0 +1,25 @@
+<div class="container">
+  <h3>Visitantes</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th id="header1">Crachá</th>
+        <th id="header2">Disponível</th>
+        <th id="header3">Nome</th>
+        <th id="header4">Checkout</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="v in visitantes" id="cracha-{{v.id}}">
+        <td>{{v.cracha}}</td>
+        <td>{{v.disponivel}}</td>
+        <td>{{v.nome}}</td>
+        <td>
+          <div class="button btn-default" ng-click="checkout(v.id)">
+            <span class="glyphicon glyphicon-log-out"></span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

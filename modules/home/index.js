@@ -75,53 +75,83 @@ angular.module('presp.home', ['presp'])
       }
     },
     newRegistryData = { sentido: ($scope.sentido === false) ? 'entrada':'saida'};
-    // encontre o tipo de documento escolhido
-    DB.model.Doc.findById($scope.tipoDoc).then(function (Doc) {
-      return DB.model.Pessoa.findOrCreate(wherePessoa).then(function (Pessoa) {
-        // TODO Salvar Registro: se pessoa existe, verifica documento, cancela se não bater, se não existe, crie.
-        Pessoa[0].setDoc(Doc); // definir a primeira pessoa encontrada com o tipo de documento definido
-        // Vai criar novo registro
-        return DB.model.Registro.create(newRegistryData).then(function (Registro) {
-          // Vai criar atribuir nova pessoa ao registro
-          return Registro.setPessoa(Pessoa[0]).then(function() {
-            return DB.conn.sync().then(function () {
-              $state.reload(true);
-              return 1;
-            }) // fim sync
-            .catch(function (err) {
-              if (err) {
-                console.error('Erro ao sincronizar: ' + err);
-                message.error();
-              }
-            }); // fim sync error catch
-          }) // fim set Pessoa
-          .catch(function (err) {
-            if (err) {
-              console.error('Erro ao definir pessoa: ' + err);
-              message.error();
-            }
-          }); // fim do set Pessoa catch error
-        }) // create Registro
-        .catch(function (err) {
-          if (err) {
-            console.error('Erro ao criar registro' + err);
-            message.error();
-          }
-        }); // fim do create registro catch error
-      })  // find or create Pessoa
-      .catch(function (err) {
-        if (err) {
-          console.error('Erro ao bucar/criar pessoa: ' + err);
-          message.error();
-        }
-      });  // fim do find/create Pessoa catch error
-    }) // find tipoDoc
-    .catch(function (err) {
-      if (err) {
-        console.error('Erro ao buscar tipo de documento: ' + err);
-        message.error();
+    DB.model.Pessoa.findOne({
+      where: {
+        $or: [
+          {nome: $scope.nome},
+          {documento: $scope.documento}
+        ]
       }
-    });  // fim do find tipoDoc catch error
+    }).then(function (pessoa) {
+      if (pessoa === null) {
+        return DB.model.Pessoa.create({
+          nome: $scope.nome,
+          documento: $scope.documento
+        }).then(function (pessoa) {
+          DB.model.Doc.findOne({where: { id: $scope.tipoDoc }})
+          .then(function (doc) {
+            return pessoa.setDoc(doc);
+          });
+        });
+      }
+        return DB.model.Pessoa.findOne({
+          where: {
+            $and: [
+              { nome: $scope.nome },
+              { documento: $scope.documento }
+            ]
+          }
+        }).then(function (pessoa) {
+          return pessoa;
+        });
+    });
+    // // encontre o tipo de documento escolhido
+    // DB.model.Doc.findById($scope.tipoDoc).then(function (Doc) {
+    //   return DB.model.Pessoa.findOrCreate(wherePessoa).then(function (Pessoa) {
+    //     // TODO Salvar Registro: se pessoa existe, verifica documento, cancela se não bater, se não existe, crie.
+    //     Pessoa[0].setDoc(Doc); // definir a primeira pessoa encontrada com o tipo de documento definido
+    //     // Vai criar novo registro
+    //     return DB.model.Registro.create(newRegistryData).then(function (Registro) {
+    //       // Vai criar atribuir nova pessoa ao registro
+    //       return Registro.setPessoa(Pessoa[0]).then(function() {
+    //         return DB.conn.sync().then(function () {
+    //           $state.reload(true);
+    //           return 1;
+    //         }) // fim sync
+    //         .catch(function (err) {
+    //           if (err) {
+    //             console.error('Erro ao sincronizar: ' + err);
+    //             message.error();
+    //           }
+    //         }); // fim sync error catch
+    //       }) // fim set Pessoa
+    //       .catch(function (err) {
+    //         if (err) {
+    //           console.error('Erro ao definir pessoa: ' + err);
+    //           message.error();
+    //         }
+    //       }); // fim do set Pessoa catch error
+    //     }) // create Registro
+    //     .catch(function (err) {
+    //       if (err) {
+    //         console.error('Erro ao criar registro' + err);
+    //         message.error();
+    //       }
+    //     }); // fim do create registro catch error
+    //   })  // find or create Pessoa
+    //   .catch(function (err) {
+    //     if (err) {
+    //       console.error('Erro ao bucar/criar pessoa: ' + err);
+    //       message.error();
+    //     }
+    //   });  // fim do find/create Pessoa catch error
+    // }) // find tipoDoc
+    // .catch(function (err) {
+    //   if (err) {
+    //     console.error('Erro ao buscar tipo de documento: ' + err);
+    //     message.error();
+    //   }
+    // });  // fim do find tipoDoc catch error
   };// end scope.register
 
 });

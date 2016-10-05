@@ -19,8 +19,8 @@ a.disabled {
 <!-- Container principal  -->
 <div class="container-fluid">
   <!-- Campo de busca -->
-  <input type="text" class="form-control" placeholder="Buscar..." style="margin-bottom: 0.5em"
-  ng-model="searchText" ng-hide="registros.length == 0" aria-label="Buscar...">
+  <!-- <input type="text" class="form-control" placeholder="Buscar..." style="margin-bottom: 0.5em"
+  ng-model="searchText" ng-hide="registros.length == 0" aria-label="Buscar..."> -->
   <!-- Exibição de informativo caso a lista de registros esteja vazia -->
   <div ng-if="count==0">
     <div class="well-lg">
@@ -35,7 +35,7 @@ a.disabled {
   <ul class="list-group" ng-if="pagination.count > 0">
     <!-- Item que se repete a cada registro -->
     <li id="listitem{{$index}}" class="list-group-item clearfix"
-    ng-repeat="r in registros | filter:searchText track by r.momento">
+    ng-repeat="r in registros | orderBy: r.momento : true">
       <span ng-if="r.sentido == 'entrada'"
         class="glyphicon glyphicon-log-in text-success"></span>
       <span ng-if="r.sentido == 'saida'"
