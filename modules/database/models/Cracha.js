@@ -4,6 +4,6 @@ module.exports = function (db, tipo) {
       type: tipo.STRING,
       unique: true
     }
-  })
-  return Cracha
-}
+  });
+  return Cracha;
+};

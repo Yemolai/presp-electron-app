@@ -49,14 +49,14 @@ a.disabled {
         ( {{ doc[r.Pessoa.TipoDocId] }}&nbsp;{{ r.Pessoa.documento }} )
       </small>
       <span id="options{{$index}}" class="pull-right ">
-        <button class="btn btn-xs btn-info hvr-btn" ng-if="r.sentido == 'saida'"
+        <!-- <button class="btn btn-xs btn-info hvr-btn" ng-if="r.sentido == 'saida'"
           ng-click="entrada(r.id)">
           <span class="glyphicon glyphicon-log-in"></span>
         </button>
         <button class="btn btn-xs btn-info hvr-btn" ng-if="r.sentido == 'entrada'"
           ng-click="saida(r.id)">
           <span class="glyphicon glyphicon-log-out"></span>
-        </button>
+        </button> -->
         <button class="btn btn-xs btn-warning hvr-btn" ng-click="delete(r.id)">
           <span class="glyphicon glyphicon-trash"></span>
         </button>

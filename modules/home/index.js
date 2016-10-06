@@ -9,8 +9,39 @@ angular.module('presp.home', ['presp'])
       Docs: function (DB) {
         return DB.listAll(DB.model.Doc, {attributes: ['id', 'descricao']});
       },
-      Crachas: function (DB) {
-        return DB.listAll(DB.model.Cracha, {attributes: ['id', 'nome']});
+      RegistrosCrachas: function (DB) {
+        /*
+        Esta função recupera os últimos registros existentes que que foram
+        registrados como saídas e seus respectivos crachás para listá-los como
+        crachás disponíveis mas ainda é necessário uma lista dos crachás e um
+        filtro para que, no caso da tabela de registros estiver vazia ou não
+        tiver uso de um crachá, esta lista também não se torne falha tendo
+        nenhum crachá ou não tendo crachás que não foram usados ao menos uma vez
+        */
+        return DB.model.Registro.findAll({
+          attributes: [ // atributos da tabela a serem requisitados
+            'CrachaId',
+            'sentido'
+          ],
+          where: { // condição "onde o id de crachá não for nulo"
+            CrachaId: { // TODO definir cracha como required no modelo Registro
+              $ne: null // not-equal null
+            }
+          },
+          include: [{ model: DB.model.Cracha, attributes: ['id', 'nome'] }],
+          group: ['CrachaId'], // ignora demais linhas com CrachaId redundante
+          order: [['createdAt', 'DESC']] // organiza pelos mais recentes
+        }) // fim da query
+        .then(function (crachas) { // manipulação do resultado
+          var visit = {};
+          for (var id in crachas) {
+            if (crachas[id].sentido == 'saida') {
+              visit[id] = crachas[id];
+            }
+          }
+          console.warn('visit: ', visit);
+          return visit;
+        });
       }
     }
   });
@@ -18,10 +49,10 @@ angular.module('presp.home', ['presp'])
   $urlRouterProvider.otherwise('/home');
 })
 // Controller da Página inicial
-.controller('homeCtrl', function ($scope, $state, DB, Docs, Crachas) {
+.controller('homeCtrl', function ($scope, $state, $stateParams, DB, Docs, RegistrosCrachas) {
   var MODULE_DIR = 'modules/home/';
   $scope.form = {};
-  $scope.title = 'Registrar';
+  $scope.title = 'Registrar entrada';
   $scope.nome = '';
   $scope.tipoDoc = 0;
   $scope.cracha = 0;
@@ -30,10 +61,8 @@ angular.module('presp.home', ['presp'])
   $scope.module_static = MODULE_DIR + 'static/';
   $scope.showDoneAlert = false;
   $scope.showErrorAlert = false;
-  $scope.setEntrada = function () { $scope.movimento = false; };
-  $scope.setSaida = function () { $scope.movimento = true; };
   $scope.tiposDoc = Docs;
-  $scope.crachas = Crachas;
+  $scope.registros = RegistrosCrachas;
 
   /**
    * Funções de exibição de mensagens ao usuário
@@ -69,9 +98,6 @@ angular.module('presp.home', ['presp'])
     if ($scope.nome === '' || $scope.documento === '' || $scope.tipoDoc === '') {
       return 0; // finalize execução
     }
-    var newRegistryData = {
-      sentido: ($scope.sentido === false) ? 'entrada':'saida',
-    };
     var associations = [];
     // TODO show loading spinning wheel
     DB.model.Pessoa.findOne({
@@ -96,7 +122,7 @@ angular.module('presp.home', ['presp'])
         if (cracha === null) {
           var error = {
             error: true,
-            message: 'crachá '+$scope.cracha+' não encontrado'
+            message: 'crachá ' + $scope.cracha + ' não encontrado'
           };
           throw error;
         } else {
@@ -104,13 +130,12 @@ angular.module('presp.home', ['presp'])
           return data;
         }
       }).then(function (data) {
-        return DB.model.Registro.create(newRegistryData)
+        return DB.model.Registro.create({sentido: 'entrada'})
         .then(function (registro) {
           if (registro === null) {
             var error = {
               error: true,
-              message: 'Erro ao cadastrar novo registro com os dados.',
-              data: newRegistryData
+              message: 'Erro ao cadastrar novo registro de entrada.',
             };
             throw error;
           } else {
@@ -128,6 +153,9 @@ angular.module('presp.home', ['presp'])
       .then(function () {
         console.warn('Registered');
         // TODO hide loading spinning wheel
+        $state.transitionTo($state.current, $stateParams, {
+          reload: true, inherit: false, notify: true
+        });
       });
     });
     // encontre o tipo de documento escolhido

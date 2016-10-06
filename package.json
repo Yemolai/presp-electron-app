@@ -6,7 +6,6 @@
   "scripts": {
     "start": "electron main.js",
     "postinstall": "bower install && npm start",
-    "update": "git pull && npm i && npm postinstall"
   },
   "repository": {
     "type": "git",

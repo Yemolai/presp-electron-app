@@ -4,14 +4,15 @@
     <div class="form-group">
       <label for="crachaPessoa">Crachá de identificação</label>
       <select id="crachaPessoa" class="form-control" ng-model="cracha" required>
-        <option ng-repeat="c in crachas track by c.id" value="{{c.id}}">
-          {{c.nome}}
+        <option ng-repeat="r in registros" value="{{r.Cracha.id}}">
+          {{r.Cracha.nome}}
         </option>
       </select>
     </div>
     <div class="form-group">
       <label for="tipoDocPessoa">Tipo de documento</label>
-      <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc" required>
+      <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc"
+        ng-disabled="registros.length < 1" required>
         <option ng-repeat="tipo in tiposDoc track by tipo.id" value="{{tipo.id}}">
           {{tipo.descricao}}
         </option>
@@ -20,27 +21,18 @@
     <div class="form-group">
       <label for="documentoPessoa">Número de documento de identidade</label>
       <input id="documentoPessoa" class="form-control" type="text" required
-        ng-model="documento" placeholder="Número do documento">
+        ng-model="documento" placeholder="Número do documento"
+        ng-disabled="registros.length < 1">
     </div>
     <div class="form-group">
       <label for="nomePessoa">Nome completo</label>
       <input id="nomePessoa" class="form-control" type="text" required
-        ng-model="nome" placeholder="Nome completo">
-    </div>
-    <div class="form-group">
-      <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-success active" ng-click="setEntrada()">
-          <input type="radio" autocomplete="off"
-            ng-model="movimento" value="entrada" checked> Entrada
-        </label>
-        <label class="btn btn-danger"  ng-click="setSaida()">
-          <input type="radio" autocomplete="off"
-            ng-model="movimento" value="saida"> Saída
-        </label>
-      </div>
+        ng-model="nome" placeholder="Nome completo"
+        ng-disabled="registros.length < 1">
     </div>
     <div class="pull-right">
-      <button id="register" class="btn btn-primary" ng-click="register()">
+      <button id="register" class="btn btn-primary" ng-click="register()"
+        ng-disabled="registros.length < 1">
         Registrar
       </button>
     </div>
