@@ -29,7 +29,6 @@ angular.module('presp.visitantes', ['presp', 'presp.database'])
               visit[id] = crachas[id];
             }
           }
-          console.warn('visit', visit);
           return visit;
         });
       }
@@ -38,7 +37,6 @@ angular.module('presp.visitantes', ['presp', 'presp.database'])
 }).controller('VisitantesCtrl', function ($scope, $state, $stateParams, DB, Visitantes) {
   $scope.visitantes = Visitantes;
   $scope.checkout = function (id) {
-    console.warn('Realizando checkout do registro ' + id);
     DB.model.Registro.create({
       sentido: 'saida'
     })

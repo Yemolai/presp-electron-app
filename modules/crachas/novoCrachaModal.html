@@ -1,0 +1,28 @@
+<div class="modal fade">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">{{title}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{description_text}}</p>
+
+		<form class="form-horizontal" role="form">
+		  <div class="form-group">
+		    <label for="name" class="col-sm-2 control-label">{{name_label_text}}</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="name" placeholder="{{name_placeholder}}" ng-model="nome" required>
+		    </div>
+		  </div>
+		</form>
+
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn btn-primary" value="Salvar"
+          ng-click="save()"></input>
+        <button type="button" ng-click="cancel()" class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

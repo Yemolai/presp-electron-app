@@ -4,8 +4,8 @@
     <div class="form-group">
       <label for="crachaPessoa">Crachá de identificação</label>
       <select id="crachaPessoa" class="form-control" ng-model="cracha" required>
-        <option ng-repeat="r in registros" value="{{r.Cracha.id}}">
-          {{r.Cracha.nome}}
+        <option ng-repeat="r in registros" value="{{r.id}}">
+          {{r.nome}}
         </option>
       </select>
     </div>

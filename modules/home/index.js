@@ -10,37 +10,44 @@ angular.module('presp.home', ['presp'])
         return DB.listAll(DB.model.Doc, {attributes: ['id', 'descricao']});
       },
       RegistrosCrachas: function (DB) {
-        /*
-        Esta função recupera os últimos registros existentes que que foram
-        registrados como saídas e seus respectivos crachás para listá-los como
-        crachás disponíveis mas ainda é necessário uma lista dos crachás e um
-        filtro para que, no caso da tabela de registros estiver vazia ou não
-        tiver uso de um crachá, esta lista também não se torne falha tendo
-        nenhum crachá ou não tendo crachás que não foram usados ao menos uma vez
-        */
-        return DB.model.Registro.findAll({
-          attributes: [ // atributos da tabela a serem requisitados
-            'CrachaId',
-            'sentido'
-          ],
-          where: { // condição "onde o id de crachá não for nulo"
-            CrachaId: { // TODO definir cracha como required no modelo Registro
-              $ne: null // not-equal null
-            }
-          },
-          include: [{ model: DB.model.Cracha, attributes: ['id', 'nome'] }],
-          group: ['CrachaId'], // ignora demais linhas com CrachaId redundante
-          order: [['createdAt', 'DESC']] // organiza pelos mais recentes
-        }) // fim da query
-        .then(function (crachas) { // manipulação do resultado
-          var visit = {};
-          for (var id in crachas) {
-            if (crachas[id].sentido == 'saida') {
-              visit[id] = crachas[id];
+        return DB.model.Cracha.findAll({}).then(function (crachas) {
+          return DB.model.Registro.findAll({
+            attributes: [ // atributos da tabela a serem requisitados
+              'CrachaId',
+              'sentido'
+            ],
+            where: { // condição "onde o id de crachá não for nulo"
+              CrachaId: { // TODO definir cracha como required no modelo Registro
+                $ne: null // not-equal null
+              }
+            },
+            include: [{ model: DB.model.Cracha, attributes: ['id', 'nome'] }],
+            group: ['CrachaId'], // ignora demais linhas com CrachaId redundante
+            order: [['createdAt', 'DESC']] // organiza pelos mais recentes
+          })
+          .then(function (registros) {
+            return {R: registros, C: crachas};
+          });
+        })
+        .then(function (data) { // manipulação do resultado
+          for (var i in data.R) { // para cada registro encontrado
+            var id = data.R[i].get('CrachaId'); // use o id de crachá
+            for (var j in data.C) { // (aqui que a gente prova o contrário)
+              if (data.C[j] && data.C[j].id == id) { // comparar crachás
+                if (data.R[i].get('sentido') == 'entrada') { // se é de entrada
+                  // significa que a última movimentação foi ficar indisponível
+                  data.C[j] = null; // então marque esse crachá
+                }
+              }
             }
           }
-          console.warn('visit: ', visit);
-          return visit;
+          data.C = data.C.filter(function (cracha) { // apaga os marcados
+            return cracha; // retorna cada objeto não nulo
+          });
+          return data.C;
+        })
+        .catch(function (err) {
+          console.error('Ocorreu um erro: ', err);
         });
       }
     }
