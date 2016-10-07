@@ -10,8 +10,8 @@ var mainWindow;
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 790,
+    height: 555,
     icon: 'img/favicon.ico'
   });
   mainWindow.setMenuBarVisibility(false);

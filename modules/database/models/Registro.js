@@ -13,14 +13,14 @@ module.exports = function (banco, tipo) {
       'defaultValue': tipo.NOW,
       'allowNull': false,
       'validate': {
-        'isAfter': "2016-09-01"
+        'isAfter': '2016-09-01'
       }
     }
   }, {
     classMethods: {
       associate: function (models) {
-        Registro.belongsTo(models.Pessoa)
-        Registro.belongsTo(models.Cracha)
+        Registro.belongsTo(models.Pessoa);
+        Registro.belongsTo(models.Cracha);
       }
     }
   })

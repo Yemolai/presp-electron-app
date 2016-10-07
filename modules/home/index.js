@@ -168,4 +168,5 @@ angular.module('presp.home', ['presp'])
     // encontre o tipo de documento escolhido
   };// end scope.register
 
+  // incluir typeahead pro documento de pessoa
 });

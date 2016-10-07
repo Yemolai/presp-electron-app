@@ -4,6 +4,14 @@ module.exports = function (db, tipo) {
       type: tipo.STRING,
       unique: true
     }
+  }, {
+    classMethods: {
+      seed: function () { // seed ALWAYS return an array of objects
+        return [
+          { id: 1, nome: 'Visitante 1'}
+        ];
+      }
+    }
   });
   return Cracha;
 };

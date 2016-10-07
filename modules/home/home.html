@@ -2,33 +2,38 @@
   <h3>{{title}}</h3>
   <form name="form.pessoa">
     <div class="form-group">
-      <label for="crachaPessoa">Crachá de identificação</label>
-      <select id="crachaPessoa" class="form-control" ng-model="cracha" required>
-        <option ng-repeat="r in registros" value="{{r.id}}">
-          {{r.nome}}
-        </option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="tipoDocPessoa">Tipo de documento</label>
-      <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc"
-        ng-disabled="registros.length < 1" required>
-        <option ng-repeat="tipo in tiposDoc track by tipo.id" value="{{tipo.id}}">
-          {{tipo.descricao}}
-        </option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="documentoPessoa">Número de documento de identidade</label>
-      <input id="documentoPessoa" class="form-control" type="text" required
-        ng-model="documento" placeholder="Número do documento"
-        ng-disabled="registros.length < 1">
-    </div>
-    <div class="form-group">
       <label for="nomePessoa">Nome completo</label>
       <input id="nomePessoa" class="form-control" type="text" required
         ng-model="nome" placeholder="Nome completo"
         ng-disabled="registros.length < 1">
+    </div>
+    <div class="row">
+      <div class="col-sm-7">
+        <div class="form-group form-inline">
+          <div>
+            <label for="documentoPessoa">Documento para identificação</label>
+          </div>
+          <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc"
+            ng-disabled="registros.length < 1" required>
+            <option ng-repeat="tipo in tiposDoc track by tipo.id" value="{{tipo.id}}">
+              {{tipo.descricao}}
+            </option>
+          </select>
+          <input id="documentoPessoa" class="form-control" type="text" required
+            ng-model="documento" placeholder="Número do documento"
+            ng-disabled="registros.length < 1 || nome == ''">
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="form-group">
+          <label for="crachaPessoa">Crachá de identificação</label>
+          <select id="crachaPessoa" class="form-control" ng-model="cracha" required>
+            <option ng-repeat="r in registros" value="{{r.id}}">
+              {{r.nome}}
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="pull-right">
       <button id="register" class="btn btn-primary" ng-click="register()"
@@ -38,4 +43,8 @@
     </div>
     <span class="alert alert-{{mensagem.level}} pull-left" ng-hide="!showMessage">{{mensagem.texto}}</span>
   </form>
+  <br>
+  <div>
+    &nbsp;
+  </div>
 </div>
