@@ -11,6 +11,7 @@
     <script>
      window.$=window.jQuery=require('./bower_components/jquery/dist/jquery.js');
     </script>
+    <script src=".env.js" charset="utf-8"></script>
     <link rel="stylesheet"
     href="bower_components/bootstrap/dist/css/bootstrap.css"
       media="screen" title="Twitter Bootstrap" charset="utf-8">
@@ -28,9 +29,10 @@
     <script
     src="bower_components/angular-file-saver/dist/angular-file-saver.bundle.js"
     charset="utf-8"></script>
-    <script 
+    <script
     src="bower_components/angular-modal-service/dst/angular-modal-service.min.js"
     charset="utf-8"></script>
+    <script src="lib/ui-bootstrap-tpls-2.2.0.min.js" charset="utf-8"></script>
     <!-- Angular modules -->
     <script src="app.js" charset="utf-8"></script>
     <script src="modules/database/index.js" charset="utf-8"></script>
@@ -40,13 +42,16 @@
     <script src="modules/list/index.js" charset="utf-8"></script>
     <script src="modules/export/index.js" charset="utf-8"></script>
     <script src="modules/abouthelp/index.js" charset="utf-8"></script>
+    <script src="modules/pessoas/index.js" charset="utf-8"></script>
+
   </head>
   <body ng-app="presp">
     <div class="container-fluid">
       <!-- Barra de navegação -->
       <nav class="navbar navbar-default">
         <div class="container-fluid">
-          <div class="navbar-header"><button class="navbar-toggle collapsed"
+          <div class="navbar-header">
+            <button class="navbar-toggle collapsed"
             data-toggle="collapse" data-target="#navbar" aria-expanded="false"
             aria-controls="navbar">
               <span class="sr-only">Abrir/fechar menu</span>
@@ -60,7 +65,8 @@
               <li><a href="#/visitantes">Visitantes</a></li>
               <li><a href="#/list">Histórico</a></li>
               <li><a href="#/crachas">Crachás</a></li>
-              <li><a href="#/export">Exportar</a></li>
+              <!-- <li><a href="#/export">Exportar</a></li> -->
+              <li><a href="#/pessoas">Pessoas</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="#/about">Sobre</a></li>

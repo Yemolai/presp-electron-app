@@ -62,10 +62,17 @@ angular.module('presp.crachas', ['presp', 'angularModalService'])
       modal.element.modal();
       return modal.close;
     }).then(function (result) {
-      console.warn('Modal was closed. Result: ', result);
+      if (result === null) {
+        var e = { message: 'Erro no modal' };
+        throw e;
+      }
       $state.transitionTo($state.current, $stateParams, {
         reload: true, inherit: false, notify: true
       });
+    })
+    .catch(function (e) {
+      console.error('Erro! ', e);
+      window.alert('Erro: ' + e.message);
     });
   };
 })
@@ -84,7 +91,6 @@ angular.module('presp.crachas', ['presp', 'angularModalService'])
     DB.model.Cracha.create({
       nome: $scope.nome
     }).then(function (Cracha) {
-      console.warn('Crachá criado:', Cracha);
       $element.modal('hide');
       close({ cracha: Cracha }, modalAnimDelay);
     }).catch(function (err) {

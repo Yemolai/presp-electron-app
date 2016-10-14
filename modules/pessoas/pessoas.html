@@ -1,0 +1,44 @@
+<style media="screen">
+.hvr-btn {
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease-in;
+  transition: opacity 0.3s ease-in;
+}
+tr:hover .hvr-btn {
+  opacity: 1;
+}
+</style>
+<h3>Pessoas registradas</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th></th>
+      <th>Documento</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="pessoa in pessoas(page)">
+      <td>{{pessoa.nome}}</td>
+      <td>{{pessoa.tipoDocumento}}</td>
+      <td>{{pessoa.documento}}</td>
+      <td>
+        <!-- <span class="btn btn-primary hvr-btn btn-xs glyphicon glyphicon-align-justify"></span> -->
+      </td>
+      <td>
+        <!-- <span class="btn btn-warning hvr-btn btn-xs glyphicon glyphicon-edit"></span> -->
+      </td>
+      <td class="text-right">
+        <!-- <span class="btn btn-danger hvr-btn btn-xs glyphicon glyphicon-trash"></span> -->
+      </td>
+    </tr>
+  </tbody>
+</table>
+<center>
+  <p>
+    <small>Existem {{pessoas('length')}} pessoas registradas</small>
+  </p>
+</center>

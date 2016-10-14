@@ -4,8 +4,7 @@
   -webkit-transition: opacity 0.3s ease-in;
   transition: opacity 0.3s ease-in;
 }
-
-.list-group-item:hover .hvr-btn {
+tr:hover .hvr-btn {
   opacity: 1;
 }
 a.disabled {
@@ -15,14 +14,20 @@ a.disabled {
     text-decoration: none;
 }
 </style>
-<h3>{{title}}</h3>
+<h3>
+  {{title}}
+  &nbsp;
+  <small ng-if="registros.length>0">
+    {{registros.length}} registros
+  </small>
+</h3>
 <!-- Container principal  -->
 <div class="container-fluid">
   <!-- Campo de busca -->
   <!-- <input type="text" class="form-control" placeholder="Buscar..." style="margin-bottom: 0.5em"
   ng-model="searchText" ng-hide="registros.length == 0" aria-label="Buscar..."> -->
   <!-- Exibição de informativo caso a lista de registros esteja vazia -->
-  <div ng-if="count==0">
+  <div ng-if="count == 0">
     <div class="well-lg">
       <div class="text-center">
         <span class="alert alert-warning">
@@ -31,65 +36,52 @@ a.disabled {
       </div>
     </div>
   </div>
-  <!-- Lista de itens de registro -->
-  <ul class="list-group" ng-if="pagination.count > 0">
-    <!-- Item que se repete a cada registro -->
-    <li id="listitem{{$index}}" class="list-group-item clearfix"
-    ng-repeat="r in registros | orderBy: r.momento : true">
-      <span ng-if="r.sentido == 'entrada'"
-        class="glyphicon glyphicon-log-in text-success"></span>
-      <span ng-if="r.sentido == 'saida'"
-        class="glyphicon glyphicon-log-out text-danger"></span>
-      &nbsp;
-      <strong>
-        {{ r.momento | date: 'short'}}
-      </strong>
-      {{ r.Pessoa.nome }}&nbsp;
-      <small>
-        ( {{ doc[r.Pessoa.TipoDocId] }}&nbsp;{{ r.Pessoa.documento }} )
-      </small>
-      <span id="options{{$index}}" class="pull-right ">
-        <!-- <button class="btn btn-xs btn-info hvr-btn" ng-if="r.sentido == 'saida'"
-          ng-click="entrada(r.id)">
-          <span class="glyphicon glyphicon-log-in"></span>
-        </button>
-        <button class="btn btn-xs btn-info hvr-btn" ng-if="r.sentido == 'entrada'"
-          ng-click="saida(r.id)">
-          <span class="glyphicon glyphicon-log-out"></span>
-        </button> -->
-        <button class="btn btn-xs btn-warning hvr-btn" ng-click="delete(r.id)">
-          <span class="glyphicon glyphicon-trash"></span>
-        </button>
-      </span>
-    </li>
-    <li ng-if="results.length==0">
-      <strong>Nenhum resultado encontrado...</strong>
-    </li>
-  </ul>
+  <table class="table table-striped" ng-if="count > 0">
+    <thead>
+      <tr>
+        <th>
+          <span class="glyphicon glyphicon-sort" style="-webkit-transform:rotate(90deg);"></span>
+        </th>
+        <th>Horário</th>
+        <th>Nome Completo</th>
+        <th>Documento de Identificação</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="r in registros | orderBy:r.createdAt:true | limitTo:limit:((page-1)*limit)">
+        <td>
+          <span class="glyphicon
+            glyphicon-log-{{(r.sentido == 'entrada')?'in':'out'}}
+            text-{{(r.sentido == 'entrada')?'success':'danger'}}">
+          </span>
+        </td>
+        <td>{{ r.momento | date:'short':'-0300' }}</td>
+        <td>{{ r.nome | uppercase }}</td>
+        <td><strong>{{ r.tipoDocumento }}</strong> {{ r.documento }}</td>
+        <td>
+          <span id="options{{$index}}" class="pull-right ">
+            <button class="btn btn-xs btn-warning hvr-btn glyphicon glyphicon-trash"
+              ng-click="delete(r.id)">
+            </button>
+          </span>
+        </td>
+      </tr>
+      <tr ng-if="registros.length < 1">
+        <td></td>
+        <td></td>
+        <td>Nenhum registro encontrado</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <center>
-    <nav aria-label="Page navigation" ng-if="pagination.count">
-      <ul class="pagination">
-        <li ng-if="!pagination.atBeginning">
-          <a href="#" aria-label="Previous" ng-click="irPagina(0)">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li ng-repeat="page in pagination.pages">
-          <a href="#" ng-if="page.enabled" aria-label="Go to page" ng-click="irPagina(page.offset)">
-            <span ng-if="page.num!=pagination.pageActual">{{page.num}}</span>
-            <span ng-if="page.num==pagination.pageActual"><strong>{{page.num}}</strong></span>
-          </a>
-          <a href="#" aria-hidden="true" ng-if="!page.enabled" class="disabled">
-            <span aria-hidden="true">&nbsp;</span>
-          </a>
-        </li>
-        <li ng-if="!pagination.atEnding">
-          <a href="#" aria-label="Next" ng-click="irPagina(pagination.lastPageOffset)">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <ul uib-pagination total-items="count" ng-model="page" ng-if="count>limit"
+      max-size="5" boundary-links="true" previous-text="Anterior"
+      next-text="Próximo" first-text="Primeira" last-text="Última"
+      force-ellipses="true"></ul>
     <p ng-hide="!pagination.count">
       <small>Existem {{pagination.count}} registros no banco de dados</small>
     </p>

@@ -3,9 +3,17 @@
   <form name="form.pessoa">
     <div class="form-group">
       <label for="nomePessoa">Nome completo</label>
-      <input id="nomePessoa" class="form-control" type="text" required
-        ng-model="nome" placeholder="Nome completo"
-        ng-disabled="registros.length < 1">
+      <input type="text" ng-model="nome" class="form-control" pattern="[\D\s]+"
+        ng-disabled = "registrando"
+        placeholder="Escreva o nome para buscar ou registrar"
+        uib-typeahead="pessoa.nome for pessoa in getPessoas($viewValue) | limitTo:8"
+        typeahead-loading="loadingLocations"
+        typeahead-no-results="noResults"
+        typeahead-on-select="selectPessoa($item, $model, $label, $event)">
+      <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+      <div ng-show="noResults">
+        <i class="glyphicon glyphicon-remove"></i> Nome não encontrado
+      </div>
     </div>
     <div class="row">
       <div class="col-sm-7">
@@ -13,35 +21,35 @@
           <div>
             <label for="documentoPessoa">Documento para identificação</label>
           </div>
-          <select id="tipoDocPessoa" class="form-control" ng-model="tipoDoc"
-            ng-disabled="registros.length < 1" required>
-            <option ng-repeat="tipo in tiposDoc track by tipo.id" value="{{tipo.id}}">
-              {{tipo.descricao}}
-            </option>
+          <select class="form-control" ng-model="tipoDoc"
+            ng-disabled="!editable || registrando"
+            required ng-options="d.descricao for d in tiposDoc track by d.id">
           </select>
-          <input id="documentoPessoa" class="form-control" type="text" required
-            ng-model="documento" placeholder="Número do documento"
-            ng-disabled="registros.length < 1 || nome == ''">
+          <input class="form-control" type="text" pattern="[\d]+" required
+            ng-disabled="!editable || registrando"
+            ng-model="documento" placeholder="Número do documento">
         </div>
       </div>
       <div class="col-sm-5">
         <div class="form-group">
           <label for="crachaPessoa">Crachá de identificação</label>
-          <select id="crachaPessoa" class="form-control" ng-model="cracha" required>
-            <option ng-repeat="r in registros" value="{{r.id}}">
-              {{r.nome}}
-            </option>
+          <select class="form-control" ng-model="cracha" required
+            ng-disabled="crachas.length < 1"
+            ng-options="c.nome for c in crachas track by c.id">
           </select>
         </div>
       </div>
     </div>
     <div class="pull-right">
       <button id="register" class="btn btn-primary" ng-click="register()"
-        ng-disabled="registros.length < 1">
+        ng-disabled="crachas.length < 1 || registrando">
         Registrar
       </button>
     </div>
-    <span class="alert alert-{{mensagem.level}} pull-left" ng-hide="!showMessage">{{mensagem.texto}}</span>
+    <br>
+    <span class="alert alert-{{mensagem.level}} pull-left" ng-hide="!mensagem.on">
+      {{mensagem.text}}
+    </span>
   </form>
   <br>
   <div>

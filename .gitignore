@@ -1,3 +1,5 @@
 node_modules
 bower_components
 database.sqlite
+.env.js
+.eslintrc.js

@@ -10,13 +10,13 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="v in visitantes" id="registro-{{v.id}}">
-      <td>{{v.Cracha.nome}}</td>
-      <td>{{v.Pessoa.Doc.descricao}} {{v.Pessoa.documento}}</td>
-      <td>{{v.Pessoa.nome}}</td>
-      <td>{{v.momento | date: 'short' : '-0300' }}</td>
+    <tr ng-repeat="v in visitantes">
+      <td>{{v.cracha}}</td>
+      <td>{{v.tipoDoc}} {{v.doc}}</td>
+      <td>{{v.nome}}</td>
+      <td>{{v.momento}}</td>
       <td class="text-center">
-        <button class="btn btn-xs btn-warning hvr-btn" ng-click="checkout($index)">
+        <button class="btn btn-xs btn-warning hvr-btn" ng-click="checkout(v.id)">
           <span class="glyphicon glyphicon-log-out"></span>
         </button>
       </td>
