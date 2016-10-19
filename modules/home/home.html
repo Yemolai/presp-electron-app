@@ -35,7 +35,7 @@
           <label for="crachaPessoa">Crachá de identificação</label>
           <select class="form-control" ng-model="cracha" required
             ng-disabled="crachas.length < 1"
-            ng-options="c.nome for c in crachas track by c.id">
+            ng-options="c.cracha for c in crachas track by c.id">
           </select>
         </div>
       </div>

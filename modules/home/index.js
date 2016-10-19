@@ -13,47 +13,12 @@ angular.module('presp.home', ['presp'])
         });
       },
       RegistrosCrachas: function (DB) {
-        return DB.model.Cracha.findAll()
-        .then(function (crachas) {
-          return DB.model.Registro.findAll({
-            attributes: [ // atributos da tabela a serem requisitados
-              'CrachaId',
-              'sentido'
-            ],
-            where: { // condição "onde o id de crachá não for nulo"
-              CrachaId: { // TODO definir cracha como required no modelo Registro
-                $ne: null // not-equal null
-              }
-            },
-            include: [{ model: DB.model.Cracha, attributes: ['id', 'nome'] }],
-            group: ['CrachaId'], // ignora demais linhas com CrachaId redundante
-            order: [['createdAt', 'DESC']] // organiza pelos mais recentes
-          })
-          .then(function (registros) {
-            return { R: registros, C: crachas };
-          });
+        return DB.getCrachas()
+        .filter(function (cracha) {
+          return cracha.sentido == 'saida';
         })
-        .then(function (data) { // manipulação do resultado
-          for (var i in data.R) { // para cada registro encontrado
-            var id = data.R[i].get('CrachaId'); // use o id de crachá
-            for (var j in data.C) { // (aqui que a gente prova o contrário)
-              if (data.C[j] && data.C[j].id == id) { // comparar crachás
-                if (data.R[i].get('sentido') == 'entrada') { // se é de entrada
-                  // significa que a última movimentação foi ficar indisponível
-                  data.C[j] = null; // então marque esse crachá
-                }
-              }
-            }
-          }
-          data.C = data.C.filter(function (cracha) { // apaga os marcados
-            return cracha; // retorna cada objeto não nulo
-          }).map(function (cracha) {
-            return cracha.get();
-          });
-          return data.C;
-        })
-        .catch(function (err) {
-          console.error('Ocorreu um erro: ', err);
+        .then(function(crachas) {
+          return crachas;
         });
       }
     }
@@ -76,6 +41,7 @@ angular.module('presp.home', ['presp'])
   $scope.showErrorAlert = false;
   $scope.tiposDoc = Docs;
   $scope.crachas = RegistrosCrachas;
+  console.warn(RegistrosCrachas);
   $scope.editable = false;
   $scope.registrando = false;
   $scope.mensagem = {
@@ -99,7 +65,11 @@ angular.module('presp.home', ['presp'])
     var invalidName = $scope.nome === '';
     var invalidDoc = $scope.documento === '';
     var invalidTipoDoc = !('id' in $scope.tipoDoc) || $scope.tipoDoc.id === 0;
-    var invalidCracha = !('id' in $scope.cracha) || $scope.cracha.id === 0;
+    var invalidCracha = !('crachaId' in $scope.cracha) || $scope.cracha.crachaId === 0;
+    console.warn('invalidName', invalidName);
+    console.warn('invalidDoc', invalidDoc);
+    console.warn('invalidTipoDoc', invalidTipoDoc);
+    console.warn('invalidCracha', invalidCracha);
     // se algum teste falhar, cancele
     if (invalidName || invalidDoc || invalidTipoDoc || invalidCracha) {
       $scope.mensagem.level = 'warning';
@@ -200,7 +170,7 @@ angular.module('presp.home', ['presp'])
         var e = {message: 'erro, pessoa indisponível'};
         throw e;
       }
-      return DB.model.Cracha.findOne({where: {id: $scope.cracha.id }})
+      return DB.model.Cracha.findOne({where: {id: $scope.cracha.crachaId }})
       .then(function (cracha) {
         if (cracha === null) {
           var error = {

@@ -19,7 +19,9 @@ module.exports = function (banco, tipo) {
   }, {
     classMethods: {
       associate: function (models) {
+        models.Pessoa.hasMany(models.Registro)
         Registro.belongsTo(models.Pessoa);
+        models.Cracha.hasMany(models.Registro);
         Registro.belongsTo(models.Cracha);
       }
     }

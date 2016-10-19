@@ -7,46 +7,14 @@ angular.module('presp.crachas', ['presp', 'angularModalService'])
     controller: 'CrachasCtrl',
     resolve: {
       Crachas: function (DB, $filter) {
-        return DB.model.Cracha.findAll() // busque os registros de Crachá
-        .then(function (crachas) { // de posse dos crachás, faça outra busca
-          return DB.model.Registro.findAll({ // busque os registros en e/s
-            attributes: [ // atributos da tabela a serem requisitados
-              'CrachaId', // pra cruzar dados
-              'sentido', // pra definir se está ou não disponível
-              'momento' // pra definir quando foi o último uso
-            ],
-            where: { // condição "onde o id de crachá não for nulo"
-              CrachaId: {
-                $ne: null // not-equal null
-              }
-            },
-            group: ['CrachaId'], // ignora demais linhas com CrachaId redundante
-            order: [['createdAt', 'DESC']] // organiza pelos mais recentes
-            // consequentemente o group+order aqui lista apenas o registro mais
-            // recente de cada crachá
-          })
-          .then(function (registros) { // e então vamos agregar num só objeto
-            return { C: crachas, R: registros }; // pra não perder dados
-          }); // este then é só pra unir dados e jogar pro then seguinte
-        }) // pra ficar mais simples de ler, usar 'data' que tem C e R
-        .then(function (data) {
-          for (var n in data.C) { // default values
-            data.C[n].disponivel = true; // todos disponíveis até que se prove o contrário
-            data.C[n].ultimoUso = 'Não usado'; // todos são virgens até que se prove o contrário
-          }
-          for (var i in data.R) { // para cada registro encontrado
-            var id = data.R[i].get('CrachaId'); // use o id de crachá
-            for (var j in data.C) { // (aqui que a gente prova o contrário)
-              if (data.C[j].id == id) { // pra encontrar o crachá atribuido
-                if (data.R[i].get('sentido') === 'entrada') { // se é de entrada
-                  data.C[j].disponivel = false; // defina que crachá está em uso
-                }
-                // se existe registro, já foi usado alguma vez, atribua 'quando'
-                data.C[j].ultimoUso = $filter('date')(data.R[i].momento, 'medium');
-              }
-            }
-          }
-          return data.C;
+        return DB.getCrachas()
+        .map(function (cracha) {
+          cracha.disponivel = cracha.sentido === 'saida';
+          cracha.momento = $filter('date')(cracha.momento, 'short', '-0300');
+          return cracha;
+        })
+        .then(function (crachas) {
+          return crachas;
         });
       }
     }

@@ -12,5 +12,10 @@ angular.module('presp', [
   'presp.crachas', // lista de crachás
   'presp.list', // listagem de fluxo
   'presp.export', // exportação de dados
-  'presp.abouthelp' // sobre/ajuda
-]);
+  'presp.abouthelp', // sobre/ajuda
+  'debug',
+  'env'
+])
+.run(function (DB) {
+  DB.initialize();
+});

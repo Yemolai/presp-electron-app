@@ -14,15 +14,15 @@
   <tbody>
     <tr ng-repeat="c in crachas">
       <td>
-        {{ c.id }}
+        {{ c.crachaId }}
       </td>
-      <td>{{ c.nome }}</td>
+      <td>{{ c.cracha }}</td>
       <td>
         <span class="glyphicon glyphicon-{{ c.disponivel ? 'ok' : 'minus' }}
           text-{{ c.disponivel ? 'success' : 'danger' }}">
         </span>
       </td>
-      <td>{{ c.ultimoUso }}</td>
+      <td>{{ c.momento }}</td>
     </tr>
   </tbody>
 </table>
