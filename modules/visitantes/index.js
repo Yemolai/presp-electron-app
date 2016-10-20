@@ -1,5 +1,5 @@
 /* global angular */
-angular.module('presp.visitantes', ['presp', 'presp.database'])
+angular.module('presp.visitantes', ['presp', 'presp.database', 'debug'])
 .config(function ($stateProvider) {
   $stateProvider
   .state('visitantes', {
@@ -8,23 +8,23 @@ angular.module('presp.visitantes', ['presp', 'presp.database'])
     controller: 'VisitantesCtrl',
     cache: false,
     resolve: {
-      'Visitantes': function (DB, $filter) {
+      'Visitantes': function (DB) {
         return DB.getCrachas()
-        .map(function (cracha) {
-          cracha.momento = $filter('date')(cracha.momento, 'short', '-0300');
-          return cracha;
-        })
-        .then(function (registros) {
-          return registros.filter(function (R) {
-            return R.sentido === 'entrada';
-          });
+        .then(function (listaDeCrachas) {
+          var crachasEmUso = [];
+          angular.forEach(listaDeCrachas, function (cracha) {
+            if (cracha.sentido === 'entrada') {
+              this.push(cracha);
+            }
+          }, crachasEmUso);
+          return crachasEmUso;
         });
       }
     }
   });
 })
-.controller('VisitantesCtrl', function ($scope, $state, $stateParams, $filter, DB, Visitantes) {
-  console.warn('Visitantes: ', Visitantes);
+.controller('VisitantesCtrl', function ($scope, $state, $stateParams, $filter, DB, Debug, Visitantes) {
+  Debug.info('Visitantes: ', Visitantes);
   var trOptions = {
     reload: true,
     inherit: false,
@@ -33,6 +33,7 @@ angular.module('presp.visitantes', ['presp', 'presp.database'])
   $scope.dateformat = function (data) {
     return $filter('date')(new Date(data),'short', '-0300');
   };
+  $scope.numeroDeVisitantes = Object.keys(Visitantes).length;
   $scope.visitantes = Visitantes;
   $scope.checkout = function (id) {
     DB.checkout(id, Visitantes)

@@ -10,16 +10,22 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="v in visitantes">
+    <tr ng-repeat="v in visitantes" ng-if="numeroDeVisitantes > 0">
       <td>{{v.cracha}}</td>
       <td>{{v.tipoDocumento}} {{v.documento}}</td>
       <td>{{v.pessoa}}</td>
-      <td>{{v.momento}}</td>
+      <td>{{v.momento | date:short:'-0300'}}</td>
       <td class="text-center">
         <button class="btn btn-xs btn-warning hvr-btn" ng-click="checkout(v.id)">
           <span class="glyphicon glyphicon-log-out"></span>
         </button>
       </td>
+    </tr>
+    <tr ng-if="numeroDeVisitantes > 0">
+      <td colspan="5" style="text-align:center">{{numeroDeVisitantes}} visitante{{numeroDeVisitantes==1?'':'s'}}</td>
+    </tr>
+    <tr ng-if="numeroDeVisitantes == 0">
+      <td colspan="5" style="text-align:center">Não há visitantes no momento</td>
     </tr>
   </tbody>
 </table>

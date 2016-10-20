@@ -6,11 +6,15 @@ function emptyFn() { return 0; }
 
 /* eslint complexity: "off" */
 function debugFactoryFunction(ENV) {
-  var cfg = ('debug' in ENV) ? ENV.debug : {};
-  var Debug = {};
-  var error, warning, info;
+  var cfg = ('debug' in ENV) ? ENV.debug : false;
 
-  switch (typeof cfg) {
+  var Debug = {};
+  var error = true;
+  var warning = false;
+  var info = false;
+  var type = typeof cfg;
+
+  switch (type) {
     default:
       error = true;
       warning = false;
@@ -39,14 +43,45 @@ function debugFactoryFunction(ENV) {
       error = cfg;
       warning = cfg;
       info = cfg;
+      cfg = (cfg) ? 'all' : 'none';
       break;
   }
 
+  var logLevelInfo = [
+    'error: ' + error,
+    'warning: ' + warning,
+    'info: ' + info
+  ]
+
+  logLevelInfo = type==='string'||type==='object'||cfg=='none'?[]:logLevelInfo;
+  if (error || warning || info) {
+    console.info('LogLevel:', cfg, '\n'+logLevelInfo.join('\n'));
+  }
+
   /* eslint no-console: "off" */
-  Debug.error = (error)   ? console.error : emptyFn;
-  Debug.warn  = (warning) ? console.warn  : emptyFn;
-  Debug.info  = (info)    ? console.log   : emptyFn;
-  Debug.log   = (info)    ? console.log   : emptyFn;
+  if (error) {
+    Debug.error = console.error;
+  } else {
+    Debug.error = emptyFn;
+    console.error = emptyFn;
+  }
+
+  if (warning) {
+    Debug.warn = console.warn;
+  } else {
+    Debug.warn = emptyFn;
+    console.warn = emptyFn;
+  }
+
+  if (info) {
+    Debug.log = console.log;
+    Debug.info = console.info;
+  } else {
+    Debug.log = emptyFn;
+    Debug.info = emptyFn;
+    console.log = emptyFn;
+    console.info = emptyFn;
+  }
 
   return Debug;
 }

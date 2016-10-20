@@ -1,4 +1,4 @@
-angular.module('presp.home', ['presp'])
+angular.module('presp.home', ['presp', 'debug'])
 .config(function ($stateProvider, $urlRouterProvider) {
   $stateProvider
   .state('home', {
@@ -7,18 +7,24 @@ angular.module('presp.home', ['presp'])
     controller: 'homeCtrl',
     resolve: {
       Docs: function (DB) {
-        return DB.listAll(DB.model.Doc, {
+        return DB.model.Doc.findAll({
           attributes: ['id', 'descricao'],
           raw: true
+        })
+        .then(function (docs) {
+          return docs;
         });
       },
       RegistrosCrachas: function (DB) {
         return DB.getCrachas()
-        .filter(function (cracha) {
-          return cracha.sentido == 'saida';
-        })
-        .then(function(crachas) {
-          return crachas;
+        .then(function(listaDeCrachas) {
+          var crachasDisponiveis = {};
+          angular.forEach(listaDeCrachas, function (cracha) {
+            if (cracha.sentido === 'saida' || cracha.sentido === null) {
+              this[cracha.crachaId] = cracha;
+            }
+          }, crachasDisponiveis);
+          return crachasDisponiveis;
         });
       }
     }
@@ -27,21 +33,21 @@ angular.module('presp.home', ['presp'])
   $urlRouterProvider.otherwise('/home');
 })
 // Controller da Página inicial
-.controller('homeCtrl', function ($scope, $state, $stateParams, DB, Docs, RegistrosCrachas) {
+.controller('homeCtrl', function ($scope, $state, $stateParams, DB, Debug, Docs, RegistrosCrachas) {
   var MODULE_DIR = 'modules/home/';
   var selectedRegisteredPerson = false;
   var PersonId = 0;
   $scope.title = 'Registrar entrada';
   $scope.nome = '';
   $scope.tipoDoc = Docs[0] || { id: 0 };
-  $scope.cracha = RegistrosCrachas[0] || { id: 0 };
+  $scope.cracha = RegistrosCrachas[Math.min(Object.keys(RegistrosCrachas))] || { id: 0 };
   $scope.documento = '';
   $scope.module_static = MODULE_DIR + 'static/';
   $scope.showDoneAlert = false;
   $scope.showErrorAlert = false;
   $scope.tiposDoc = Docs;
   $scope.crachas = RegistrosCrachas;
-  console.warn(RegistrosCrachas);
+  Debug.warn(RegistrosCrachas);
   $scope.editable = false;
   $scope.registrando = false;
   $scope.mensagem = {
@@ -57,7 +63,7 @@ angular.module('presp.home', ['presp'])
   $scope.register = function () {
     // se não há dados não é possível registrar
     if ($scope.registrando) {
-      console.error('ERROR! Already registering!');
+      Debug.error('ERROR! Already registering!');
       return 1;
     }
     $scope.registrando = true; // para bloquear múltiplos registros
@@ -66,10 +72,10 @@ angular.module('presp.home', ['presp'])
     var invalidDoc = $scope.documento === '';
     var invalidTipoDoc = !('id' in $scope.tipoDoc) || $scope.tipoDoc.id === 0;
     var invalidCracha = !('crachaId' in $scope.cracha) || $scope.cracha.crachaId === 0;
-    console.warn('invalidName', invalidName);
-    console.warn('invalidDoc', invalidDoc);
-    console.warn('invalidTipoDoc', invalidTipoDoc);
-    console.warn('invalidCracha', invalidCracha);
+    Debug.warn('invalidName', invalidName);
+    Debug.warn('invalidDoc', invalidDoc);
+    Debug.warn('invalidTipoDoc', invalidTipoDoc);
+    Debug.warn('invalidCracha', invalidCracha);
     // se algum teste falhar, cancele
     if (invalidName || invalidDoc || invalidTipoDoc || invalidCracha) {
       $scope.mensagem.level = 'warning';
@@ -79,8 +85,8 @@ angular.module('presp.home', ['presp'])
       return 0; // finalize execução
     }
     if (!((/[\D\s]+/).test($scope.nome))) {
-      console.warn($scope.nome);
-      console.warn((/[\D\s]+/).test($scope.nome));
+      Debug.warn($scope.nome);
+      Debug.warn((/[\D\s]+/).test($scope.nome));
       $scope.mensagem.level = 'warning';
       $scope.mensagem.text = 'Nome não deve conter números';
       $scope.mensagem.on = true;
@@ -88,8 +94,8 @@ angular.module('presp.home', ['presp'])
       return 0; // finalize execução
     }
     if (!((/[\d]+/).test($scope.documento))) {
-      console.warn($scope.documento);
-      console.warn((/[\d]+/).test($scope.documento));
+      Debug.warn($scope.documento);
+      Debug.warn((/[\d]+/).test($scope.documento));
       $scope.mensagem.level = 'warning';
       $scope.mensagem.text = 'Documento de identificação deve conter apenas números';
       $scope.mensagem.on = true;
@@ -133,7 +139,7 @@ angular.module('presp.home', ['presp'])
             PessoaId: pessoa.id
           }
         }).then(function (registros) {
-          console.warn(registros);
+          Debug.warn(registros);
           if (registros === null ||
             registros.length < 1 ||
             !('sentido' in registros[0]) ||
@@ -212,7 +218,7 @@ angular.module('presp.home', ['presp'])
       });
     })
     .catch(function (err) {
-      console.error('Error: ', err);
+      Debug.error('Error: ', err);
       window.alert('Erro: ' + err.message);
       $state.transitionTo($state.current, $stateParams, {
         reload: true, inherit: false, notify: true
@@ -246,7 +252,7 @@ angular.module('presp.home', ['presp'])
       });
     })
     .catch(function (e) {
-      console.error('Algo deu errado ao procurar pessoa: ', e);
+      Debug.error('Algo deu errado ao procurar pessoa: ', e);
     });
   }; // function getPessoas end
 

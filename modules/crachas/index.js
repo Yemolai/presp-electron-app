@@ -9,7 +9,7 @@ angular.module('presp.crachas', ['presp', 'angularModalService'])
       Crachas: function (DB, $filter) {
         return DB.getCrachas()
         .map(function (cracha) {
-          cracha.disponivel = cracha.sentido === 'saida';
+          cracha.disponivel = (cracha.sentido === 'saida' || cracha.sentido === null);
           cracha.momento = $filter('date')(cracha.momento, 'short', '-0300');
           return cracha;
         })

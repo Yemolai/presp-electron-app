@@ -12,6 +12,8 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
   var dialeto = ENV.db.dialect;
   var args = {};
 
+  // startup -------------------------------------------------------------------
+  //
   switch (dialeto) {
     default:
       args = { user: '', pw: '', schema: '', options: { dialect: 'sqlite' } };
@@ -40,13 +42,24 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
     model: {}
   };
 
+  // modelos para tabelas de dados
+  // lê cada item do diretório
+  fs.readdirSync(MODEL_DIR).filter(function (file) { // filtrando
+    // para garantir que não inclua ., .., ocultos e o index.js
+    return (file.indexOf('.') !== 0) && (file !== 'index.js');
+  }).forEach(function (file) { // para cada um da lista filtrada
+    var model = DB.conn.import(path.join(MODEL_DIR, file)); // importe ao banco de dados
+    DB.model[model.name] = model; // atribua o modelo na organização
+  });
+
+  // ---------------------------------------------------------------------------
+
   DB.getCrachas = function () {
     var Crachas = {};
     return DB.model.Cracha.findAll() // encontre todos os crachás
     .then(function (crachas) {
       var estados = [];
       crachas.forEach(function (c, i) {
-        console.warn('c',c);
         Crachas[c.id] = crachas[i];
         estados.push(c.getRegistros());
         return c;
@@ -54,52 +67,75 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
       return estados;
     })
     .map(function (registros) {
+      if (registros.length < 1) {
+        return false;
+      }
       var ids = registros.map(function(o) {
         return o.id;
       });
       var max = Reflect.apply(Math.max, Math, ids);
       return registros.filter(function (r) {return (r.id===max);})[0];
     })
-    .then(function (registros) {
-      registros.forEach(function (r) {
-        if (r.CrachaId in Crachas) {
-          Crachas[r.CrachaId].UltimoRegistro = r.get();
-        }
-      });
-      return registros;
-    })
-    .map(function (registro) {
-      var data = {};
-      return registro.getPessoa()
-      .then(function (pessoa) {
-        data.pessoa = pessoa;
-        return data;
-      })
-      .then(function (data) {
-        return data.pessoa.getDoc()
-        .then(function (doc) {
-          data.doc = doc;
-          return data;
+    .then(function (ultimosRegistros) {
+      var Promessas = [];
+      Debug.info('últimos registros:', ultimosRegistros);
+      angular.forEach(Crachas, function (Cracha, n) {
+        Debug.info('Crachá ('+typeof Cracha+'):', Cracha);
+        var cracha = Cracha.get();
+        Debug.info('crachá ('+typeof cracha+'):', cracha);
+        var ultimo = ultimosRegistros.filter(function (R) {
+          return (R && 'CrachaId' in R && R.CrachaId == n);
         });
-      })
-      .then(function (data) {
-        var c = Crachas[registro.CrachaId];
-        return {
-          registroId: registro.id,
-          crachaId: c.id,
-          cracha: c.nome,
-          pessoaId: data.pessoa.id,
-          pessoa: data.pessoa.nome,
-          sentido: registro.sentido,
-          momento: registro.momento,
-          tipoDocumento: data.doc.descricao,
-          documento: data.pessoa.documento
+        cracha.ultimoRegistro = (ultimo.length > 0) ? ultimo[0] : false;
+        if (cracha.ultimoRegistro) {
+          Debug.info('ultimo registro de '+cracha.nome+':',cracha.ultimoRegistro.get());
+          var promessa = cracha.ultimoRegistro.getPessoa()
+          .then(function (pessoa) {
+            Debug.info('Última pessoa a usar o crachá',cracha.nome,'foi',pessoa.nome);
+            cracha.ultimoRegistro = cracha.ultimoRegistro.get();
+            cracha.ultimoRegistro.pessoa = pessoa.get();
+            return pessoa;
+          })
+          .then(function (pessoa) {
+            return pessoa.getDoc();
+          })
+          .then(function (doc) {
+            cracha.ultimoRegistro.pessoa.doc = doc;
+            Crachas[n] = cracha;
+            Debug.info('crachá: ', Crachas[n]);
+          });
+          this.push(promessa);
+        } else {
+          Debug.info('Crachá '+cracha.nome+' ainda não foi usado.');
+          Crachas[n] = cracha;
+          Debug.info('crachá: ', Crachas[n]);
         }
-      });
+      }, Promessas);
+      Debug.info('informação completa dos crachás:\n', Crachas);
+      return Promessas;
     })
     .all()
-    .then(function (registros) {
-      return registros;
+    .then(function () {
+      var resultado = [];
+      angular.forEach(Crachas, function (cracha) {
+        var hasReg = cracha.ultimoRegistro != false;
+        this.push({
+          crachaId: cracha.id,
+          cracha: cracha.nome,
+          registroId: hasReg? cracha.ultimoRegistro.id : null,
+          sentido: hasReg? cracha.ultimoRegistro.sentido : null,
+          momento: hasReg? cracha.ultimoRegistro.momento : null,
+          pessoaId: hasReg? cracha.ultimoRegistro.pessoa.id : null,
+          pessoa: hasReg? cracha.ultimoRegistro.pessoa.nome : null,
+          documento: hasReg? cracha.ultimoRegistro.pessoa.documento : null,
+          tipoDocumento: hasReg? cracha.ultimoRegistro.pessoa.doc.descricao : null
+        });
+      }, resultado);
+      Debug.info('resultado: ', resultado);
+      return resultado;
+    })
+    .then(function (resultado) {
+      return resultado;
     })
     .catch(function (e) {
       console.error(e);
@@ -146,14 +182,6 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
     });
   }
 
-  // modelos para tabelas de dados
-  // lê cada item do diretório
-  fs.readdirSync(MODEL_DIR).filter(function (file) { // filtrando
-    return (file.indexOf('.') !== 0) && (file !== 'index.js'); // para que não inclua ., .., ocultos e o index.js
-  }).forEach(function (file) { // para cada um da lista filtrada
-    var model = DB.conn.import(path.join(MODEL_DIR, file)); // importe ao banco de dados
-    DB.model[model.name] = model; // atribua o modelo na organização
-  });
 
   Object.keys(DB.model).forEach(function (modelName) { // busque os índices da lista de modelos e para cada um
     if ('associate' in DB.model[modelName]) { // verifique se tem uma função de relacionamento
@@ -232,10 +260,11 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
   }
 
   DB.initialize = function () {
+    if (ENV.force === true) Debug.warn('WILL DROP ALL TABLES');
     DB.conn.authenticate() // autentica, testa conexão e inicializa dados padrão
     .then(function (err) { // sequencia verificação
       if (err) throw err;
-      return DB.conn.sync({force: false}) // cria tabelas
+      return DB.conn.sync({force: ENV.force}) // cria tabelas
       .then(function () {
         Object.keys(DB.model).map(function (modelName) {
           var result;
@@ -246,19 +275,16 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
                 // realiza uma inserção massiva
                 return DB.model[modelName].bulkCreate(DB.model[modelName].seed())
                 .then(function (/*rowList*/) {
-                  if (ENV.debug) {
-                    console.warn('Modelo ' + modelName + ' preenchido.');
-                  }
+                  Debug.info('Modelo ' + modelName + ' preenchido.');
                 }); // bulkCreate
               } // if n<1
+              Debug.info('Modelo ' + modelName + ' já tem dados');
             }) // count then
             .catch(function (err) {
               console.error('Erro: ', err);
             });
           } else {
-            if (ENV.debug) {
-              console.warn('Modelo ' + modelName + ' não tem seed');
-            }
+            Debug.warn('Modelo ' + modelName + ' não tem seed');
             result = true;
           } // if seed else
           return result;
