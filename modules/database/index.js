@@ -1,5 +1,25 @@
 /* global angular */
+/* eslint max-lines: off */
 angular.module('presp.database', ['presp', 'debug', 'env'])
+.value('DATABASEFAIL', false)
+.config(function ($stateProvider) {
+  $stateProvider.state('databasefailed', {
+    url: '/dbFail',
+    template: '<table style=\'width:100%\'><thead><tr><th '+
+    'style=\'text-align:center\'>Não foi possível conectar ao banco de dados'+
+    '</th><tr><tr><th style=\'text-align:center\'>Verifique sua conexão de rede'+
+    '</th></tr></thead></table>',
+    onEnter: function (DATABASEFAIL) {
+      if (DATABASEFAIL == false) {
+        // eslint-disable-next-line no-param-reassign
+        DATABASEFAIL = true;
+      }
+    },
+    onExit: function ($state) {
+      $state.go('databasefailed');
+    }
+  });
+})
 // Factory do banco de dados
 .factory('DB', function ($state, Debug, ENV) {
   var MODULE_DIR = 'modules/database/';
@@ -11,19 +31,15 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
   var connection;
   var dialeto = ENV.db.dialect;
   var args = {};
-
-  // startup -------------------------------------------------------------------
-  //
+// startup----------------------------------------------------------------------
   switch (dialeto) {
     default:
       args = { user: '', pw: '', schema: '', options: { dialect: 'sqlite' } };
       break;
-
     case 'sqlite':
       args = { user: '', pw: '', schema: '' };
       args.options = { dialect: dialeto, storage: SQLITE_PATH };
       break;
-
     case 'mysql':
       args = { user: ENV.db.username, pw: ENV.db.password, schema: ENV.db.database }
       args.options = { host: ENV.db.host, dialect: dialeto };
@@ -33,7 +49,6 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
     args.options.logging = false;
   }
   connection = new Sequelize(args.schema, args.user, args.pw, args.options);
-
   var DB = {
     _seq: Sequelize,
     promise: Sequelize.Promise,
@@ -51,7 +66,6 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
     var model = DB.conn.import(path.join(MODEL_DIR, file)); // importe ao banco de dados
     DB.model[model.name] = model; // atribua o modelo na organização
   });
-
   // ---------------------------------------------------------------------------
 
   DB.getCrachas = function () {
@@ -138,6 +152,9 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
       return resultado;
     })
     .catch(function (e) {
+      if (e.name === 'SequelizeHostNotFoundError') {
+        $state.go('databasefailed');
+      }
       console.error(e);
       console.error('Erro! ' + e.message);
     });
@@ -263,8 +280,11 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
     if (ENV.force === true) Debug.warn('WILL DROP ALL TABLES');
     DB.conn.authenticate() // autentica, testa conexão e inicializa dados padrão
     .then(function (err) { // sequencia verificação
-      if (err) throw err;
-      return DB.conn.sync({force: ENV.force}) // cria tabelas
+      if (err) {
+        $state.go('databasefailed');
+        throw err;
+      }
+      return DB.conn.sync({force: ENV.db.overwrite}) // cria tabelas
       .then(function () {
         Object.keys(DB.model).map(function (modelName) {
           var result;

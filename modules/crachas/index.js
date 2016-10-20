@@ -1,4 +1,4 @@
-angular.module('presp.crachas', ['presp', 'angularModalService'])
+angular.module('presp.crachas', ['presp', 'angularModalService', 'presp.database'])
 .config(function ($stateProvider) {
   $stateProvider
   .state('crachas', {
