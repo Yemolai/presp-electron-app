@@ -24,6 +24,7 @@ angular.module('presp.home', ['presp', 'debug'])
               this[cracha.crachaId] = cracha;
             }
           }, crachasDisponiveis);
+          // Debug.info('crachas disponiveis: ', crachasDisponiveis);
           return crachasDisponiveis;
         });
       }
@@ -34,6 +35,7 @@ angular.module('presp.home', ['presp', 'debug'])
 })
 // Controller da Página inicial
 .controller('homeCtrl', function ($scope, $state, $stateParams, DB, Debug, Docs, RegistrosCrachas) {
+  Debug.info('Crachas disponíveis: ', RegistrosCrachas);
   var MODULE_DIR = 'modules/home/';
   var selectedRegisteredPerson = false;
   var PersonId = 0;
@@ -67,17 +69,16 @@ angular.module('presp.home', ['presp', 'debug'])
       return 1;
     }
     $scope.registrando = true; // para bloquear múltiplos registros
-    // testes de variáveis
-    var invalidName = $scope.nome === '';
-    var invalidDoc = $scope.documento === '';
-    var invalidTipoDoc = !('id' in $scope.tipoDoc) || $scope.tipoDoc.id === 0;
-    var invalidCracha = !('crachaId' in $scope.cracha) || $scope.cracha.crachaId === 0;
-    Debug.warn('invalidName', invalidName);
-    Debug.warn('invalidDoc', invalidDoc);
-    Debug.warn('invalidTipoDoc', invalidTipoDoc);
-    Debug.warn('invalidCracha', invalidCracha);
+    // teste se as variáveis não estão vazias
+    var invalid = {
+      name: $scope.nome === '',
+      doc: $scope.documento === '',
+      tipoDoc: !('id' in $scope.tipoDoc) || $scope.tipoDoc.id === 0,
+      cracha: !('crachaId' in $scope.cracha) || $scope.cracha.crachaId === 0
+    };
+    Debug.warn('invalid', invalid);
     // se algum teste falhar, cancele
-    if (invalidName || invalidDoc || invalidTipoDoc || invalidCracha) {
+    if (invalid.name || invalid.doc || invalid.tipoDoc || invalid.cracha) {
       $scope.mensagem.level = 'warning';
       $scope.mensagem.text = 'Preencha todos os campos corretamente';
       $scope.mensagem.on = true;
@@ -132,18 +133,17 @@ angular.module('presp.home', ['presp', 'debug'])
       var DoctypeMatch = pessoa.Doc.id === $scope.tipoDoc.id;
       var DocNumberMatch = pessoa.documento === $scope.documento;
       if (DoctypeMatch && DocNumberMatch) {
-        return DB.model.Registro.findAll({
-          order: [['momento', 'DESC']],
-          group: ['PessoaId'],
-          where: {
-            PessoaId: pessoa.id
+        return pessoa.getRegistros()
+        .then(function (Registros) {
+          if (Registros.length < 1 || Registros === null) {
+            return { Pessoa: pessoa };
           }
-        }).then(function (registros) {
-          Debug.warn(registros);
-          if (registros === null ||
-            registros.length < 1 ||
-            !('sentido' in registros[0]) ||
-            registros[0].sentido === 'saida') {
+          var IDs = Registros.map(function (o) { return o.id; });
+          var lastID = Reflect.apply(Math.max, Math, IDs);
+          var registro = Registros.filter(function(R) {return R.id===lastID;})[0].get();
+          Debug.warn('ultimo registro de '+pessoa.nome+': ',registro);
+          if (!('sentido' in registro) ||
+            registro.sentido === 'saida') {
             return { Pessoa: pessoa };
           }
           $scope.mensagem = {
@@ -171,6 +171,7 @@ angular.module('presp.home', ['presp', 'debug'])
         }
       };
       throw error_dump;
+      // aqui que a busca pela pessoa termina!
     }).then(function (data) {
       if (data === null) {
         var e = {message: 'erro, pessoa indisponível'};

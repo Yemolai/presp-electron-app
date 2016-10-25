@@ -14,6 +14,7 @@ angular.module('presp.visitantes', ['presp', 'presp.database', 'debug'])
           var crachasEmUso = [];
           angular.forEach(listaDeCrachas, function (cracha) {
             if (cracha.sentido === 'entrada') {
+              var C = cracha;
               this.push(cracha);
             }
           }, crachasEmUso);

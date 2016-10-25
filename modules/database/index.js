@@ -31,7 +31,7 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
   var connection;
   var dialeto = ENV.db.dialect;
   var args = {};
-// startup----------------------------------------------------------------------
+  // startup--------------------------------------------------------------------
   switch (dialeto) {
     default:
       args = { user: '', pw: '', schema: '', options: { dialect: 'sqlite' } };
@@ -134,6 +134,7 @@ angular.module('presp.database', ['presp', 'debug', 'env'])
       angular.forEach(Crachas, function (cracha) {
         var hasReg = cracha.ultimoRegistro != false;
         this.push({
+          id: cracha.id,
           crachaId: cracha.id,
           cracha: cracha.nome,
           registroId: hasReg? cracha.ultimoRegistro.id : null,
